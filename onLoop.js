@@ -1,4 +1,4 @@
-function main(){
+function onLoop(time, curSeq, curSeqDurs, ){
    	// console.log(time); //Tone.Time(time).toNotation())
 	if (Tone.Time(time) >= curSeqDurs[durInd] + lastNoteVal) {
 		// console.log(curSeqEnable);

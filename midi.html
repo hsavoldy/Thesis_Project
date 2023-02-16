@@ -1,6 +1,13 @@
 <script src="http://unpkg.com/tone"></script>
 <button id="play-button">Play/Pause</button>
+
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.11/lib/codemirror.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.11/lib/codemirror.css">
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.11/mode/javascript/javascript.js"></script>
+
+<script src="onLoop.js"></script>
 <script src="midi.js"></script>
+
 <style>
 li {
     width: 25%;
@@ -8,7 +15,9 @@ li {
 }
 </style>
 
-<div>Current Sequence: </div><div id="curSeq"></div>
-<div>New Sequence : </div><div id="newSeq"></div>
+<!-- <div>Current Pitch Sequence: </div><div id="curSeq"></div>
+<div>New Pitch Sequence : </div><div id="newSeq"></div>
+<div>Duration Sequence : </div><div id="curSeqDurs"></div>
+<div>Enable Sequence : </div><div id="curSeqEnable"></div> -->
 
-<ol id="midimonitor"></ol>
+<!-- <ol id="midimonitor"></ol> -->
