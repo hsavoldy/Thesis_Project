@@ -1,0 +1,148 @@
+<html lang=en>
+
+<head>
+	<meta charset='utf-8'>
+	<!-- code cribbed from:
+	 https://codemirror.net/5/doc/manual.html   -->
+	<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.11/lib/codemirror.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.11/lib/codemirror.css">
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.11/mode/javascript/javascript.js"></script>
+	
+	<script src="https://cdn.jsdelivr.net/npm/webmidi@latest/dist/iife/webmidi.iife.js"></script>
+
+	<style>
+		.CodeMirror-highlight {
+			background: red;
+			text-decoration: underline
+		}
+	</style>
+
+</head>
+<body>
+
+</body>
+
+<script>
+window.onload = function() {
+	const cm = CodeMirror( document.body, {
+		value: "function myScript(){return 100;}\n",
+		mode:  "javascript"
+	});
+
+
+	cm.setOption( 'extraKeys', {
+		'Ctrl-Enter': function( cm ) {
+		   const code = getSelectionCodeColumn( cm, true )
+		   console.log( 'the code is:', code.code )
+
+		   try {
+		     flash( cm, code.selection )
+		     eval( code.code )
+			   } catch (err) {
+			     console.error( err )
+			   }
+			},
+		'Alt-Enter': function( cm ) {
+		   const code = getSelectionCodeColumn( cm, false )
+		   console.log( 'the code is:', code.code )
+
+		   try {
+		     flash( cm, code.selection )
+		     eval( code.code )
+			   } catch (err) {
+			     console.error( err )
+			   }
+			},
+
+		})
+
+	getSelectionCodeColumn = function( cm, findBlock ) {
+	    let  pos = cm.getCursor(), 
+	    text = null
+
+	    if( !findBlock ) {
+	      text = cm.getDoc().getSelection()
+
+	      if ( text === "") {
+	        text = cm.getLine( pos.line )
+	      }else{
+	        pos = { start: cm.getCursor('start'), end: cm.getCursor('end') }
+	        //pos = null
+	      }
+	    }else{
+	      let startline = pos.line, 
+	          endline = pos.line,
+	          pos1, pos2, sel
+
+	      while ( startline > 0 && cm.getLine( startline ) !== "" ) { startline-- }
+	      while ( endline < cm.lineCount() && cm.getLine( endline ) !== "" ) { endline++ }
+
+	      pos1 = { line: startline, ch: 0 }
+	      pos2 = { line: endline, ch: 0 }
+
+	      text = cm.getRange( pos1, pos2 )
+
+	      pos = { start: pos1, end: pos2 }
+	    }
+
+	    if( pos.start === undefined ) {
+	      let lineNumber = pos.line,
+	          start = 0,
+	          end = text.length
+
+	      pos = { start:{ line:lineNumber, ch:start }, end:{ line:lineNumber, ch: end } }
+	    }
+
+	    return { selection: pos, code: text }
+	  };
+  
+	function flash (cm, pos) {
+		let sel,
+		    cb = function() { sel.clear() }
+
+		if (pos !== null) {
+		  if( pos.start ) { // if called from a findBlock keymap
+		    sel = cm.markText( pos.start, pos.end, { className:"CodeMirror-highlight" } );
+		  }else{ // called with single line
+		    sel = cm.markText( { line: pos.line, ch:0 }, { line: pos.line, ch:null }, { className: "CodeMirror-highlight" } )
+		  }
+		}else{ // called with selected block
+		  sel = cm.markText( cm.getCursor(true), cm.getCursor(false), { className: "CodeMirror-highlight" } )
+		}
+
+		window.setTimeout( cb, 250 )
+	}
+
+    const startMidi = function(){
+		console.log( 'midi enabled' )
+		console.log(WebMidi.outputs)
+		console.log(WebMidi.inputs)
+	}
+
+	WebMidi
+	    .enable()
+	    .then( startMidi )
+	    .catch(err => alert(err));
+
+    // AudioContext.prototype.createClock = function(p, e, s = 0.1, n = 0.1) {
+	// 	let o = 0, t = 0, l = 10 ** 4, h = 0.01;
+	// 	const k = (c) => e = c(e);
+	// 	n = n || s / 2;
+	// 	const a = () => {
+	// 	const c = this.currentTime, I = c + s + n;
+	// 	for (t === 0 && (t = c + h); t < I; )
+	// 	  t = Math.round(t * l) / l, t >= c && p(t, e, o), t += e, o++;
+	// 	};
+	// 	let i;
+	// 	const u = () => {
+	// 	a(), i = setInterval(a, s * 1e3);
+	// 	}, r = () => clearInterval(i);
+	// 	return { setDuration: k, start: u, stop: () => {
+	// 	o = 0, t = 0, r();
+	// 	}, pause: () => r(), duration: e };
+	// };
+
+}
+</script>
+
+</html>

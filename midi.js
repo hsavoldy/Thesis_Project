@@ -233,7 +233,6 @@ class Seq {
 	}
 
 	addNote(note){
-		console.log('here');
 		this.notes.push(note);
 	}
 
